@@ -1,0 +1,31 @@
+use robot as knowledge.
+
+module robotInit {
+	% Store map information, i.e., navigation points in the agent's belief base.
+	forall percept(zone(ID, Name, X, Y, Neighbours))  
+		do insert( zone(ID, Name, X, Y, Neighbours) ).
+
+	% Record the initial state of movement in belief base.
+	if percept(state(State)) then insert( state(State) ).
+	
+	% Adopt initial goals.
+	forall bel( room(Place) ) do adopt( in(Place) ).
+
+	% Exercise 2.1a: insert rules for processing percepts that are sent only at the beginning of a session, 
+	%  and/or need to be initialized.
+	forall percept(at(Place)) do insert( at(Place) ).
+	
+	forall percept(atBlock(Block)) do insert(atBlock(Block)).
+	
+	forall percept(color(Block, Color)) do insert(color(Block, Color)).
+	
+	if percept(holding(Block)) then insert( holding(Block) ).
+	
+	if percept(in(Room)) then insert(in(Room)).
+	
+	forall percept(place(Place)) do insert(place(Place)).
+	
+	if percept(sequence(Colors)) then insert(sequence(Colors)).
+	
+	if percept(sequenceIndex(Index)) then insert(sequenceIndex(Index)).
+}
