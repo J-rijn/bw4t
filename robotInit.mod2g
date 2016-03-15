@@ -13,19 +13,16 @@ module robotInit {
 
 	% Exercise 2.1a: insert rules for processing percepts that are sent only at the beginning of a session, 
 	%  and/or need to be initialized.
-	forall percept(at(Place)) do insert( at(Place) ).
 	
-	forall percept(atBlock(Block)) do insert(atBlock(Block)).
-	
-	forall percept(color(Block, Color)) do insert(color(Block, Color)).
-	
-	if percept(holding(Block)) then insert( holding(Block) ).
-	
-	if percept(in(Room)) then insert(in(Room)).
-	
+	% Save all place on the map into the belief base
 	forall percept(place(Place)) do insert(place(Place)).
 	
-	if percept(sequence(Colors)) then insert(sequence(Colors)).
+	% Save color sequence into the belief base
+	forall percept(sequence(Colors))
+		do insert(sequence(Colors)).
 	
+	% Save sequence index into belief base
 	if percept(sequenceIndex(Index)) then insert(sequenceIndex(Index)).
 }
+
+
