@@ -10,22 +10,21 @@ module robotInit {
 	
 	% Adopt initial goals.
 	forall bel( room(Place) ) do adopt( in(Place) ).
+	
 
 	% Exercise 2.1a: insert rules for processing percepts that are sent only at the beginning of a session, 
 	%  and/or need to be initialized.
-	forall percept(at(Place)) do insert( at(Place) ).
-	
-	forall percept(atBlock(Block)) do insert(atBlock(Block)).
-	
-	forall percept(color(Block, Color)) do insert(color(Block, Color)).
-	
-	if percept(holding(Block)) then insert( holding(Block) ).
-	
-	if percept(in(Room)) then insert(in(Room)).
+	if percept(at(Place)) then insert(at(Place)).
 	
 	forall percept(place(Place)) do insert(place(Place)).
 	
-	if percept(sequence(Colors)) then insert(sequence(Colors)).
+	if percept(sequence(Sequence)) then insert(sequence(Sequence)).
 	
-	if percept(sequenceIndex(Index)) then insert(sequenceIndex(Index)).
+	if percept(sequenceIndex(Index)) then insert (sequenceIndex(Index)).
+	
+	
+	
+	
+	
+	
 }
