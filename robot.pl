@@ -10,8 +10,7 @@
 	sequence/1,			% matches the sequence/1 percept
 	sequenceIndex/1,		% matches the sequenceIndex/1 percept
 	block/2,
-	visited/1,
-	nth/3.				% matches the nth/3 percept
+	visited/1.				% matches the nth/3 percept
 
 
 % A room is a place with exactly one neighbour, i.e., there is only one way to get to and from that place.

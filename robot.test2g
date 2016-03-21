@@ -3,11 +3,54 @@ use robot as knowledge.
 use robot as module.
 timeout = 300.
 
-test main with
+test robot with
 	pre { true }
-	in {				
+	in {		
+		%Test the init
+		percept(zone(ID, Name, X, Y, Neighbours)) leadsto bel(zone(ID, Name, X, Y, Neighbours)).
+		percept(state(State)) leadsto bel(state(State)).
+		bel( room(Place) ) leadsto goal( in(Place) ).
+		percept(at(Place)) leadsto bel(at(Place)).
+		percept(place(Place)) leadsto bel(place(Place)).
+		percept(sequence(Sequence)) leadsto bel(sequence(Sequence)).
+		percept(sequenceIndex(Index)) leadsto bel(sequenceIndex(Index)).
+		
+		%Test the events
+		percept(state(NewState)) leadsto bel(state(NewState)).
+		percept(state(NewState)), bel(state(OldState), not(NewState = OldState)) leadsto not(bel(state(OldState))).
+		percept(at(Place)) leadsto bel(at(Place)).
+		percept(at(NewPlace)), bel(at(OldPlace), not(NewPlace = OldPlace)) leadsto not(bel(at(OldPlace))).
+		percept(atBlock(Place)) leadsto bel(atBlock(Place)).
+		percept(not(atBlock(Place))), bel(atBlock(Place)) leadsto not(bel(atBlock(Place))).
+		percept(color(Block, Color)), not(bel(color(Block, Color))) leadsto bel(color(Block, Color)).
+		percept(holding(Block)) leadsto bel(holding(Block)).
+		percept(not(holding(Block))), bel(holding(Block)) leadsto not(bel(holding(Block))).
+		percept(in(Place)) leadsto bel(in(Place)).
+		percept(not(in(Place))), bel(in(Place)) leadsto not(bel(in(Place))).
+		percept(sequenceIndex(Index)) leadsto bel(sequenceIndex(Index)).
+		percept(sequenceIndex(NewIndex)), bel(sequenceIndex(OldIndex), not(NewIndex = OldIndex)) leadsto not(bel(sequenceIndex(OldIndex))).
+		percept(color(Block, Color)), percept(in(Room)), not(bel(block(Block, Room))) leadsto bel(block(Block, Room)).
+		percept(in(Room)), not(bel(visited(Room))) leadsto bel(visited(Room)).
+		percept(holding(Block)), bel(in(Room)) leadsto not(bel(block(Block, Room))).
+		bel( nextColorInSeq(Color)), bel(color(Block, Color)), bel(block(Block, Room)), not(bel(in(Room))) leadsto goal(in(Room)).
+		bel( nextColorInSeq(Color)), bel(color(Block, Color)), bel(block(Block, Room)), bel(in(Room)) leadsto goal(atBlock(Block)).
+		bel(atBlock(Block), nextColorInSeq(Color), color(Block, Color) ) leadsto goal(holding(Block)).
+		never goal(holding(Block)), a-goal(holding(Block)), bel(nextColorInSeq(OtherColor), color(Block, Color)), bel(not(OtherColor = Color)).
+		not(a-goal(in('DropZone'))), bel(holding(Block), not(in('DropZone'))) leadsto goal(in('DropZone')).
+		
+		%Test actions
+		bel(holding(_), in('DropZone')) leadsto done(putDown).
+		a-goal(in('DropZone')) leadsto done( goTo('DropZone')).
+		a-goal(holding(Block)) leadsto done(pickUp(Block)).  
+		a-goal(atBlock(Block)) leadsto done(goToBlock(Block)).
+		a-goal(in(Room)), bel(visited(Room)) leadsto done(goTo(Room)).
+		a-goal(in(Room)) leadsto done(goTo(Room)).
+				
 		% Assignment 3.1: insert test conditions for the mandatory requirements.
-			
+		never done(putDown), not(bel(in(_))), bel(holding(Block)).
+		never done(pickUp(Block)), bel(nextColorInSeq(Color), atBlock(Block), block(Block, OtherColor)), bel(not(Color = OtherColor)).
+		never done(goTo('DropZone')), bel(holding(Block), nextColorInSeq(Color), block(Block, OtherColor) ), bel(not(Color = OtherColor)).
+		never done(goTo(Room)), bel(holding(Block), not(Room = 'DropZone')).
 		% Assignment 3.2: insert any additional conditions for further requirements.
 		 
 	}
