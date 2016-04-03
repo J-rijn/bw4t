@@ -4,23 +4,47 @@ exit=nogoals.
 
 module main {
 	
+	% If the agent is delivering a block that is not the next color in sequence than the drop the goal
+	% to go to the DZ and go to RoomC3.
+	if bel(holding(Block), color(Block, Color), not(nextColorInSeq(Color)))
+		then goTo("RoomC3") + drop(in("DropZone")).
+		
+	% If the agent is holding the right coloured block in the DZ then put the block down.
+	if bel(in("DropZone"), holding(Block), color(Block, Color), nextColorInSeq(Color))
+		then putDown.
+		
+	% If the agent is holding a wrond coloured block in RoomC3 then put the block down. And update
+	% all the other agent that this block is now in RoomC3.
+	if bel(in("RoomC3"), holding(Block), color(Block, Color), not(nextColorInSeq(Color)))
+		then putDown + allother.send(block(Block, "RoomC3")).
 	
-    
-    % Exercise 2.6a: insert code for action rules that makes the agent deliver a block when it
-    %   knows about a block that can be delivered. 
-	if bel(holding(_), in('DropZone')) then putDown.
+	% Drop the goals to get a block if the block is not in the room any more.
+	if a-goal(atBlock(Block)), bel(in(Place), not(block(Block, Place)))
+		then drop(atBlock(Block)) + drop(holding(Block)).
+	
+	% Go to the DZ if their is a goal to go to the DZ.
 	if a-goal(in('DropZone')) then goTo('DropZone').
 	
-	% Exercise 2.5a: insert code for action rules that allows an agent to systematically search for blocks.
-	if a-goal(holding(Block)) then pickUp(Block).  
+	% 
+	if a-goal(holding(Block)), not(goal(atBlock(Block)))
+		then pickUp(Block) + adopt(in("DropZone")).
+		
 	if a-goal(atBlock(Block)) then goToBlock(Block).
-	if a-goal(in(Room)), bel(visited(Room)) then goTo(Room).
-	if a-goal(in(Room)) then goTo(Room).
+	if a-goal(at(Place)) then goTo(Place).
+	if a-goal(in(Room)) then goTo(Room). 
 	
+	if bel(in(Place), nextBlock(Block, Place), not(holding(_))), not(goal(atBlock(_))), not(goal(holding(_)))
+		then adopt(holding(Block)) + adopt(atBlock(Block)).
 	
+	if bel(not(nextColorInSeq(_))), bel(not(at("FrontDropZone")))
+		then adopt(at("FrontDropZone")).
+		
+	if bel(not(nextColorInSeq(_))), bel(at("FrontDropZone"), not(state(traveling)))
+		then exit-module.
+		
+	if bel(nextPlace(Place)), not(goal(in(_)))
+		then adopt(in(Place)).
 	
-	
-	
-	
-	
+	if bel( room(Place), not(visited(Place)), nextColorInSeq(_)), not(goal(in(_)))
+		then adopt( in(Place) ).
 }

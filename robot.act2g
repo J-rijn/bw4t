@@ -4,7 +4,7 @@ use robot as knowledge.
 % As long as the agent has not arrived at the place it is going to, it will be in "traveling" mode.
 define goTo(Location) with
 	pre { not(state(traveling)), place(Location) }
-	post { at(Location) }
+	post { true }
 
 % Exercise 2.3a: insert a specification for the goToBlock(Block) action.
 define goToBlock(Block) with
@@ -13,10 +13,10 @@ define goToBlock(Block) with
 
 % Exercise 2.3b: insert a specification for the pickUp action.
 define pickUp(Block) with
-	pre { atBlock(Block), not(holding(_)), not(state(traveling))}
-	post{ true}
+	pre { atBlock(Block), not(holding(_)) }
+	post{ holding(Block) }
 
 % Exercise 2.3c: insert a specification for the putDown action.
 define putDown with
 	pre { holding(Block), state(arrived)}
-	post{ not(holding(Block))}
+	post{ not(holding(Block)) }
