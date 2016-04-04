@@ -13,10 +13,10 @@ define goToBlock(Block) with
 
 % Exercise 2.3b: insert a specification for the pickUp action.
 define pickUp(Block) with
-	pre { atBlock(Block), not(holding(_)) }
-	post{ holding(Block) }
+	pre { atBlock(Block), not(holding(_)), not(state(traveling))}
+	post{ true}
 
 % Exercise 2.3c: insert a specification for the putDown action.
 define putDown with
 	pre { holding(Block), state(arrived)}
-	post{ not(holding(Block)) }
+	post{ not(holding(Block))}

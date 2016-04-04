@@ -10,10 +10,7 @@
 	sequence/1,			% matches the sequence/1 percept
 	sequenceIndex/1,		% matches the sequenceIndex/1 percept
 	block/2,
-	player/1,
-	ownName/1,
-	position/3,
-	location/2,
+	nextSequenceIndex/1,
 	visited/1.				% matches the nth/3 percept
 
 
@@ -21,10 +18,4 @@
 room(PlaceID) :- zone(_,PlaceID,_,_,Neighbours), length(Neighbours,1).
 
 % Exercise 2.2: insert a definition of the predicate "nextColorInSeq(Color)".
-nextColorInSeq(Color):- sequence(List), sequenceIndex(Index), nth0(Index, List, Color).
-
-% Find the next block
-nextBlock(Block, Place) :- nextColorInSeq(Color), color(Block, Color), block(Block, Place).
-
-% Find the next place
-nextPlace(Place) :- nextBlock(_, Place).
+nextColorInSeq(Color):- sequence(List), sequenceIndex(Index), nth0(Index, List, Color). 

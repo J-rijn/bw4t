@@ -6,25 +6,25 @@ module robotInit {
 		do insert( zone(ID, Name, X, Y, Neighbours) ).
 
 	% Record the initial state of movement in belief base.
-	forall percept(state(State)) do insert( state(State) ).
+	if percept(state(State)) then insert( state(State) ).
 	
+	% Adopt initial goals.
+	forall bel( room(Place) ) do adopt( in(Place) ).
+	
+
 	% Exercise 2.1a: insert rules for processing percepts that are sent only at the beginning of a session, 
 	%  and/or need to be initialized.
-	forall percept(at(Place)) do insert(at(Place)).
+	if percept(at(Place)) then insert(at(Place)).
 	
 	forall percept(place(Place)) do insert(place(Place)).
-	
-	% Save the players in the env
-	forall percept(player(Player)) do insert(player(Player)).
-	
-	% Save own player name
-	forall percept(ownName(Player)) do insert(ownName(Player)).
 	
 	if percept(sequence(Sequence)) then insert(sequence(Sequence)).
 	
 	if percept(sequenceIndex(Index)) then insert (sequenceIndex(Index)).
 	
-	forall percept(position(ObjectID, X, Y)) do insert ( position(ObjectID, X, Y) ).
-		
-	forall percept(location(X, Y)) do insert ( location(X, Y) ).
+	
+	
+	
+	
+	
 }

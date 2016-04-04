@@ -51,6 +51,7 @@ test robot with
 		never done(pickUp(Block)), bel(nextColorInSeq(Color), atBlock(Block), block(Block, OtherColor)), bel(not(Color = OtherColor)).
 		never done(goTo('DropZone')), bel(holding(Block), nextColorInSeq(Color), block(Block, OtherColor) ), bel(not(Color = OtherColor)).
 		never done(goTo(Room)), bel(holding(Block), not(Room = 'DropZone')).
+		
 		% Assignment 3.2: insert any additional conditions for further requirements.
 		 
 	}
