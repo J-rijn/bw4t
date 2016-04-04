@@ -1,4 +1,5 @@
 use robot as knowledge.
+order=linearall.
 
 module robotEvents {
 	% Update the agent's state of movement.
@@ -8,34 +9,60 @@ module robotEvents {
 	% Record when we are entering or leaving a room.
 	forall percept(in(Place)) do insert( in(Place) ).
 	forall percept(not(in(Place))) do delete( in(Place) ).
+	
+	% Priority to proces the messages
+	forall (Robot).sent!(block(Block, Room)) do delete(block(Block, Room)).
+	forall (Robot).sent:(block(Block, Room)) do insert(block(Block, Room)).
+	forall (Robot).sent:(visited(Room)) do insert(visited(Room)).
 
 	% Exercise 2.1b: insert rules for handling percepts other than "sendonce" percepts.
-	forall bel( at(Place)), percept(at(NewPlace))do delete( at(Place) ) + insert( at(NewPlace) ).
+	% Update at/1 percept
+	forall bel(at(Place)), percept(at(NewPlace))
+		do delete( at(Place) ) + insert( at(NewPlace) ).
+	
+	% Update atBlock/1 percept
 	forall percept(atBlock(Place)) do insert(atBlock(Place)).
 	forall percept(not(atBlock(Place))) do delete(atBlock(Place)).
-	forall percept(color(Block, Color)), not(bel(color(Block, Color))) do insert(color(Block, Color)).
+	
+	% Insert color/2 into beliefbase when color/2 is not already in the beliefbase
+	forall percept(color(Block, Color)), not(bel(color(Block, Color))) 
+		do insert(color(Block, Color)).
+		
+	% Update holding/1
 	forall percept(holding(Block)) do insert( holding(Block) ). 
 	forall percept(not(holding(Block))) do delete( holding(Block) ).
-	if percept(in(Room)) then insert (in(Room)) + (robot).send:(in(Room)).
-	if percept(not(in(Room))) then delete(in(Room)).
 	
+	% Update in/1 percept
+	if percept(in(Room)) then insert(in(Room)) + (robot).send:(in(Room)).
+	if percept(not(in(Room))) then delete(in(Room)).
+
+	% Update sequenceIndex/1 percept
 	if bel(sequenceIndex(Index)), percept(sequenceIndex(NewIndex)) 
 		then delete(sequenceIndex(Index)) + insert (sequenceIndex(NewIndex)) .
 		
-	if percept(in(Room)), not(bel(visited(Room))), not(bel(Room = 'DropZone')) then insert(visited(Room)).
-	forall percept(color(Block, Color)), percept(in(Room)), not(bel(block(Block, Room))) do insert (block(Block, Room)).
-	if bel(holding(Block), block(Block, Room)) then allother.send:(holding(Block)) + allother.send:(block(Block, Room)).
+	% Insert visited/1 into beliefbase iff not already there or Room is the dropzone
+	if percept(in(Room)), not(bel(visited(Room))), not(bel(Room = 'DropZone')) 
+		then insert(visited(Room)) + allother.send:(visited(Room)).
+	
+	% Insert block/2 into beliefbase (so the agent knows which block is in which room)
+	forall percept(color(Block, Color)), percept(in(Room)), not(bel(block(Block, Room))) 
+		do insert (block(Block, Room)) + allother.send:(block(Block, Room)).
+	
+	% If holding a block then send the other agents that this agent is holding the block and from which room the block was
+	if bel(holding(Block), block(Block, Room)) 
+		then allother.send:(holding(Block)) + allother.send!(block(Block, Room)).
+	
+	% Delete block/2 when holding this block
 	if percept(holding(Block)), bel(in(Room)) then delete(block(Block, Room)).
 	
 	% Exercise 2.5b: insert code for goal management that allows an agent to systematically search for blocks. (if needed)
-	if a-goal(in(Room)), bel(visited(Room)) then drop(in(Room)).
-	if bel( nextColorInSeq(Color)), bel(color(Block, Color)), bel(block(Block, Room)), not(bel(in(Room))) then adopt (in(Room)).
-	if bel( nextColorInSeq(Color)), bel(color(Block, Color)), bel(block(Block, Room)), bel(in(Room)) then adopt (atBlock(Block)).
+	% Drop goal to go to a room when the agent already visited this room.
 	
 	% Exercise 2.6b: insert code for goal management that makes the agent deliver a block when it 
 	%   knows about a block that can be delivered. (if needed)
 	if bel(atBlock(Block), nextColorInSeq(Color), color(Block, Color) ) then adopt(holding(Block)).
 	if not(a-goal(in('DropZone'))), bel(holding(Block), not(in('DropZone'))) then adopt(in('DropZone')).
+	
 	% 1.3
 	if bel(holding(Block), nextColorInSeq(OtherColor), color(Block, Color)), not(bel(OtherColor = Color)) then drop(in('DropZone')).
 	if a-goal(atBlock(Block)), bel(nextColorInSeq(OtherColor), color(Block, Color)), not(bel(OtherColor = Color)) then drop(atBlock(Block)).
@@ -43,12 +70,18 @@ module robotEvents {
 	
 	forall (Robot).sent:(holding(Block)), bel(sequenceIndex(X)), bel(Y is X + 1) do insert(nextSequenceIndex(Y)).
 	if bel(nextSequenceIndex(Y), nextSequenceIndex(X), X < Y) then delete(nextSequenceIndex(X)).
-	forall (Robot).sent:(block(Block, Room)) do delete(block(Block, Room)).
+	
 	if bel(nextSequenceIndex(Y)) then insert (sequenceIndex(Y)).
 	if bel(sequenceIndex(Y), sequenceIndex(X), X < Y) then delete(sequenceIndex(X)).
 	
+	% test
+	if a-goal(in(Room)), bel(visited(Room)) then drop(in(Room)).
+		
+	if bel(nextColorInSeq(Color)), bel(color(Block, Color)), bel(block(Block, Room)), not(bel(in(Room))) then adopt (in(Room)).
+	if bel(nextColorInSeq(Color)), bel(color(Block, Color)), bel(block(Block, Room)), bel(in(Room)) then adopt (atBlock(Block)).
+	
 	% This will cause the agent to drop al it's goals when the sequence is complete.
-	if bel( sequenceIndex(X), X =:= 6 ) then{
+	if bel( sequenceIndex(X), X =:= 6 ) then {
     	forall goal(in(Y)) do drop(in(Y)).
     }
 }

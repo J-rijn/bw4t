@@ -18,5 +18,5 @@ define pickUp(Block) with
 
 % Exercise 2.3c: insert a specification for the putDown action.
 define putDown with
-	pre { holding(Block), state(arrived)}
-	post{ not(holding(Block))}
+	pre { holding(Block), state(arrived) }
+	post{ not(holding(Block)) }

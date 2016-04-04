@@ -4,9 +4,9 @@ use "bw4t-client-3.8.5.jar" as environment with
 	agentcount = "3", humancount = "0", launchgui = "false", goal = "true".
 
 define robot as agent {
+	use robotEvents as event module.
 	use robot as main module.
 	use robotInit as init module.
-	use robotEvents as event module.
 } 
 
 launchpolicy{

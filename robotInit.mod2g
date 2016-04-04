@@ -3,7 +3,7 @@ use robot as knowledge.
 module robotInit {
 	% Store map information, i.e., navigation points in the agent's belief base.
 	forall percept(zone(ID, Name, X, Y, Neighbours))  
-		do insert( zone(ID, Name, X, Y, Neighbours) ).
+		do insert(zone(ID, Name, X, Y, Neighbours) ).
 
 	% Record the initial state of movement in belief base.
 	if percept(state(State)) then insert( state(State) ).
@@ -21,10 +21,5 @@ module robotInit {
 	if percept(sequence(Sequence)) then insert(sequence(Sequence)).
 	
 	if percept(sequenceIndex(Index)) then insert (sequenceIndex(Index)).
-	
-	
-	
-	
-	
 	
 }

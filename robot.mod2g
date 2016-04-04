@@ -4,24 +4,16 @@ exit=nogoals.
 
 module main {
 	
-	
-    
     % Exercise 2.6a: insert code for action rules that makes the agent deliver a block when it
     %   knows about a block that can be delivered. 
 	%if bel(holding(Block), nextColorInSeq(OtherColor), color(Block, Color), in('DropZone')), not(bel(OtherColor = Color)), a-goal(in(Room)) then goTo(Room).
 	if not(a-goal(in('DropZone'))), bel(in(Room), holding(_)) then putDown.
-	if a-goal(in('DropZone')) then goTo('DropZone').
+	if a-goal(in('DropZone')), bel(holding(Block), color(Block, Color), nextColorInSeq(Color)) then goTo('DropZone').
 	
 	% Exercise 2.5a: insert code for action rules that allows an agent to systematically search for blocks.
 	if a-goal(holding(Block)) then pickUp(Block).  
 	if a-goal(atBlock(Block)) then goToBlock(Block).
 	if a-goal(in(Room)), bel(visited(Room)) then goTo(Room).
 	if a-goal(in(Room)) then goTo(Room).
-	
-	
-	
-	
-	
-	
 	
 }
