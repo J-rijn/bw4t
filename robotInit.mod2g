@@ -22,4 +22,5 @@ module robotInit {
 	
 	if percept(sequenceIndex(Index)) then insert (sequenceIndex(Index)).
 	
+	if a-goal(in('DropZone')) then drop(in('DropZone')).
 }
